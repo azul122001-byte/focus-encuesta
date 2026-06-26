@@ -18,7 +18,8 @@ app.get("/", (req, res) => {
 // Configuración OAuth2
 const CLIENT_ID = "348043415389-jefp7e92esoni03fqe6ds843f23jla00.apps.googleusercontent.com";
 const CLIENT_SECRET = "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";
-const REDIRECT_URI = "http://127.0.0.1:3000/oauth2callback";
+const REDIRECT_URI = process.env.REDIRECT_URI || "https://focus-encuesta.onrender.com/oauth2callback";
+
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 const fs = require("fs");
