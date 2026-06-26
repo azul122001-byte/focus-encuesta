@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>Focus Group Virtual</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9fafb;
+      color: #333;
+      margin: 20px;
+    }
+    h1, h2 { text-align: center; color: #2c3e50; }
+    p.intro, p.bajada {
+      max-width: 600px; margin: 0 auto 20px auto;
+      text-align: justify; line-height: 1.5;
+    }
+    button {
+      background-color: #4CAF50; color: white; border: none;
+      padding: 12px 20px; margin: 10px auto; border-radius: 6px;
+      cursor: pointer; font-size: 16px; display: block;
+    }
+    button:hover { background-color: #45a049; }
+    #preguntas {
+      margin-top: 20px; padding: 15px; background: #ffffff;
+      border: 1px solid #ddd; border-radius: 6px;
+      max-width: 500px; margin-left: auto; margin-right: auto;
+    }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    textarea {
+      width: 100%; min-height: 60px; margin-top: 6px;
+      padding: 8px; border: 1px solid #ccc; border-radius: 4px;
+      resize: vertical; font-size: 14px;
+    }
+    img, video { width: 300px; margin: 20px auto; display: block; }
+  </style>
+</head>
+<body>
+  <h1>Focus Group Virtual</h1>
+  <p class="intro">
+    Hola, somos <strong>Azul M.</strong>, <strong>Azul F.</strong> y <strong>Esteban</strong>, y estamos realizando nuestro último final de la carrera de Licenciatura en Diseño Gráfico. 
+    Ya estamos en la etapa final y necesitamos tu ayuda para completar este trabajo. 
+    La dinámica es sencilla: al comenzar vas a ver por un corto tiempo una serie de imágenes y videos, 
+    y luego te pediremos que respondas algunas preguntas basadas en lo que viste. 
+    Tus respuestas nos van a ayudar a analizar cómo se perciben las piezas y qué sensaciones generan.
+  </p>
+ <button id="btnComenzar" onclick="comenzar()">Comenzar</button>
+
+
+  <!-- Pantalla de aviso -->
+  <div id="aviso" style="display:none;">
+    <h2>Exposición de las piezas</h2>
+    <p class="bajada">
+      A partir de ahora debés estar muy atent@. Vas a ver las piezas por un corto tiempo y luego tendrás que responder preguntas sobre lo que recuerdes y lo que te generó.
+    </p>
+    <button onclick="mostrarSiguiente()">Mostrar primera pieza</button>
+  </div>
+
+  <!-- Contenedor de piezas y preguntas -->
+  <div id="exposicion" style="display:none;">
+    <h2 id="tituloPieza"></h2>
+    <div id="contenedorPieza"></div>
+
+    <div id="preguntas" style="display:none;">
+      <label>¿Qué fue lo primero que te llamó la atención?</label>
+      <textarea id="q1" placeholder="Escribí tu respuesta aquí..."></textarea>
+
+      <label>¿Qué entendiste que se quería comunicar?</label>
+      <textarea id="q2" placeholder="Escribí tu respuesta aquí..."></textarea>
+
+      <label>¿Qué sensación o emoción te transmitió?</label>
+      <textarea id="q3" placeholder="Escribí tu respuesta aquí..."></textarea>
+
+      <label>¿Qué imagen, palabra o recurso gráfico recordás?</label>
+      <textarea id="q4" placeholder="Escribí tu respuesta aquí..."></textarea>
+
+      <label>¿Cómo te resultó la experiencia en este formato?</label>
+      <textarea id="q5" placeholder="Escribí tu respuesta aquí..."></textarea>
+
+      <label>¿Te dieron ganas de compartir, comentar o guardar la pieza?</label>
+      <textarea id="q6" placeholder="Escribí tu respuesta aquí..."></textarea>
+
+      <!-- Pregunta extra para carruseles -->
+      <div id="extraCarrusel" style="display:none;">
+        <label>¿Cuál de las imágenes del carrusel recordás más?</label>
+        <textarea id="recordacionCarrusel" placeholder="Escribí tu respuesta aquí..."></textarea>
+      </div>
+
+      <button onclick="continuar()">Continuar</button>
+    </div>
+  </div>
+
+<script>
+const piezas = [
+  { tipo:"imagen", archivo:"POSTEO 1.jpeg", titulo:"Post 1 - Individual" },
+  { tipo:"carrusel", archivos:[
+    "CARRUSEL1-01.jpeg","CARRUSEL1-02.jpeg","CARRUSEL1-03.jpeg",
+    "CARRUSEL1-04.jpeg","CARRUSEL1-05.jpeg","CARRUSEL1-06.jpeg"
+  ], titulo:"Post 2 - Carrusel 1" },
+  { tipo:"carrusel", archivos:[
+    "CARRUSEL3-01.jpg","CARRUSEL3-02.jpg","CARRUSEL3-03.jpg","CARRUSEL3-04.jpg"
+  ], titulo:"Post 5 - Carrusel 3" },
+  { tipo:"carrusel", archivos:[
+    "CARRUSEL4-01.jpg","CARRUSEL4-02.jpg","CARRUSEL4-03.jpg",
+    "CARRUSEL4-04.jpg","CARRUSEL4-05.jpg"
+  ], titulo:"Post 6 - Carrusel 4" }
+];
+
+let indiceActual = 0;
+
+function comenzar() {
+  document.querySelector("h1").style.display = "none";
+  document.querySelector(".intro").style.display = "none";
+  document.getElementById("btnComenzar").style.display = "none";
+  document.getElementById("aviso").style.display = "block";
+}
+
+
+function mostrarSiguiente() {
+  document.getElementById("aviso").style.display = "none";
+  document.getElementById("exposicion").style.display = "block";
+
+  const pieza = piezas[indiceActual];
+  document.getElementById("tituloPieza").innerText = "Exposición: " + pieza.titulo;
+  const contenedor = document.getElementById("contenedorPieza");
+  contenedor.innerHTML = "";
+  document.getElementById("preguntas").style.display = "none";
+  document.getElementById("extraCarrusel").style.display = "none";
+
+  if (pieza.tipo === "imagen") {
+    const img = document.createElement("img");
+    img.src = pieza.archivo;
+    contenedor.appendChild(img);
+    setTimeout(() => {
+      contenedor.innerHTML = "";
+      document.getElementById("preguntas").style.display = "block";
+    }, 5000);
+  }
+
+  if (pieza.tipo === "carrusel") {
+    if (pieza.archivos.length === 0) {
+      contenedor.innerHTML = "<p style='text-align:center;'>Carrusel aún no disponible</p>";
+      setTimeout(() => {
+        contenedor.innerHTML = "";
+        document.getElementById("preguntas").style.display = "block";
+        document.getElementById("extraCarrusel").style.display = "block";
+      }, 3000);
+    } else {
+      let i = 0;
+      const img = document.createElement("img");
+      contenedor.appendChild(img);
+      const intervalo = setInterval(() => {
+        img.src = pieza.archivos[i];
+        i++;
+        if (i >= pieza.archivos.length) {
+          clearInterval(intervalo);
+          setTimeout(() => {
+            contenedor.innerHTML = "";
+            document.getElementById("preguntas").style.display = "block";
+            document.getElementById("extraCarrusel").style.display = "block";
+          }, 1000);
+        }
+      }, 3000);
+    }
+  }
+
+  if (pieza.tipo === "video") {
+    const video = document.createElement("video");
+    video.src = pieza.archivo;
+    video.autoplay = true;
+    video.controls = false;
+    contenedor.appendChild(video);
+    video.onended = () => {
+      contenedor.innerHTML = "";
+      document.getElementById("preguntas").style.display = "block";
+    };
+  }
+}
+
+function continuar() {
+  document.getElementById("preguntas").style.display = "none";
+
+  const pieza = piezas[indiceActual].titulo;
+  const datos = {
+    pieza: pieza,
+    q1: document.getElementById("q1").value,
+    q2: document.getElementById("q2").value,
+    q3: document.getElementById("q3").value,
+    q4: document.getElementById("q4").value,
+    q5: document.getElementById("q5").value,
+    q6: document.getElementById("q6").value,
+    recordacionCarrusel: document.getElementById("recordacionCarrusel").value
+  };
+
+  // Enviar al backend
+  fetch("http://127.0.0.1:3000/guardar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos)
+  })
+  .then(res => res.text())
+  .then(msg => console.log("Respuesta del servidor:", msg))
+  .catch(err => console.error("Error al enviar:", err));
+
+  // 🔹 Limpiar los campos para la próxima pieza
+  document.getElementById("q1").value = "";
+  document.getElementById("q2").value = "";
+  document.getElementById("q3").value = "";
+  document.getElementById("q4").value = "";
+  document.getElementById("q5").value = "";
+  document.getElementById("q6").value = "";
+  document.getElementById("recordacionCarrusel").value = "";
+
+  indiceActual++;
+  if (indiceActual < piezas.length) {
+    mostrarSiguiente();
+  } else {
+    document.getElementById("tituloPieza").innerText = "¡Gracias por participar!";
+    document.getElementById("contenedorPieza").innerHTML = "";
+  }
+}
+</script>
+</body>
+</html>
+
+
