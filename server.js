@@ -18,8 +18,7 @@ app.get("/", (req, res) => {
 // Configuración OAuth2
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI;
-
+const REDIRECT_URI = "https://focus-encuesta.onrender.com/oauth2callback";
 const oAuth2Client = new google.auth.OAuth2(
   CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 );
@@ -32,6 +31,7 @@ if (fs.existsSync("tokens.json")) {
 
 // Paso 1: redirigir al usuario para autorizar
 app.get("/auth", (req, res) => {
+  console.log("REDIRECT_URI usado:", REDIRECT_URI);
   const url = oAuth2Client.generateAuthUrl({
     access_type: "offline",
     prompt: "consent",
