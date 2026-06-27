@@ -1,0 +1,9 @@
+# Archivos de configuración local
+.env
+tokens.json
+
+# Dependencias
+node_modules/
+
+# Logs
+*.log

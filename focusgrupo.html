@@ -193,7 +193,7 @@ function continuar() {
   };
 
   // Enviar al backend
-  fetch("http://127.0.0.1:3000/guardar", {
+  fetch("https://focus-encuesta.onrender.com/guardar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(datos)
