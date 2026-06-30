@@ -92,18 +92,23 @@
 
 <script>
 const piezas = [
-  { tipo:"imagen", archivo:"POSTEO 1.jpeg", titulo:"Post 1 - Individual" },
+  { tipo:"imagen", archivo:"POSTEO 1.webp", titulo:"Posteo N° 1" },
   { tipo:"carrusel", archivos:[
-    "CARRUSEL1-01.jpeg","CARRUSEL1-02.jpeg","CARRUSEL1-03.jpeg",
-    "CARRUSEL1-04.jpeg","CARRUSEL1-05.jpeg","CARRUSEL1-06.jpeg"
-  ], titulo:"Post 2 - Carrusel 1" },
+    "CARRUSEL1-01.webp","CARRUSEL1-02.webp","CARRUSEL1-03.webp",
+    "CARRUSEL1-04.webp","CARRUSEL1-05.webp","CARRUSEL1-06.webp"
+  ], titulo:"Posteo N° 2" },
+  { tipo:"reel", archivos:"video", titulo:"Posteo N° 3"},
   { tipo:"carrusel", archivos:[
-    "CARRUSEL3-01.jpg","CARRUSEL3-02.jpg","CARRUSEL3-03.jpg","CARRUSEL3-04.jpg"
-  ], titulo:"Post 5 - Carrusel 3" },
+    "CARRUSEL2-01.webp","CARRUSEL2-02.webp","CARRUSEL2-03.webp","CARRUSEL2-04.webp"
+  ], titulo:"Posteo N°4" },
   { tipo:"carrusel", archivos:[
-    "CARRUSEL4-01.jpg","CARRUSEL4-02.jpg","CARRUSEL4-03.jpg",
-    "CARRUSEL4-04.jpg","CARRUSEL4-05.jpg"
-  ], titulo:"Post 6 - Carrusel 4" }
+    "CARRUSEL3-01.webp","CARRUSEL3-02.webp","CARRUSEL3-03.webp",
+    "CARRUSEL3-04.webp"
+  ], titulo:"Posteo N° 5" },
+  { tipo:"carrusel", archivos:[
+    "CARRUSEL4-01.webp","CARRUSEL4-02.webp","CARRUSEL4-03.webp",
+    "CARRUSEL4-04.webp","CARRUSEL4-05.webp"
+  ], titulo:"Posteo N°6" }
 ];
 
 let indiceActual = 0;
@@ -130,6 +135,7 @@ function mostrarSiguiente() {
   if (pieza.tipo === "imagen") {
     const img = document.createElement("img");
     img.src = pieza.archivo;
+    img.loading = "lazy";
     contenedor.appendChild(img);
     setTimeout(() => {
       contenedor.innerHTML = "";

@@ -9,6 +9,8 @@ const fs = require("fs");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
+
 
 // Ruta por defecto: abrir focusgrupo.html al entrar a /
 app.get("/", (req, res) => {
