@@ -180,6 +180,7 @@ function mostrarSiguiente() {
   const video = document.createElement("video");
   video.autoplay = true;
   video.controls = true;
+    video.muted = true;
 
   const sourceWebM = document.createElement("source");
   sourceWebM.src = pieza.archivoWebM;   // ej. "reel.webm"
