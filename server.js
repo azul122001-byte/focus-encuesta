@@ -4,35 +4,36 @@ const express = require("express");
 const cors = require("cors");
 const { google } = require("googleapis");
 const path = require("path");
-const fs = require("fs");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Esta línea expone la carpeta "public" donde tenés imágenes y videos
+// 🔹 Exponer carpeta "public" para imágenes y videos
 app.use(express.static("public"));
 
-// Ruta por defecto: abrir focusgrupo.html al entrar a /
+// 🔹 Ruta por defecto: abrir focusgrupo.html al entrar a /
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "focusgrupo.html"));
 });
 
-// Configuración OAuth2
+// 🔹 Configuración OAuth2 con variables de entorno
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = "https://focus-encuesta.onrender.com/oauth2callback";
+
 const oAuth2Client = new google.auth.OAuth2(
-  CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI
 );
 
-// Al iniciar el servidor, intentar cargar tokens
-if (fs.existsSync("tokens.json")) {
-  const tokens = JSON.parse(fs.readFileSync("tokens.json"));
-  oAuth2Client.setCredentials(tokens);
-}
+// Usar directamente el refresh_token guardado en Render
+oAuth2Client.setCredentials({
+  refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+});
 
-// Paso 1: redirigir al usuario para autorizar
+// 🔹 Paso 1: redirigir al usuario para autorizar (solo la primera vez)
 app.get("/auth", (req, res) => {
   console.log("REDIRECT_URI usado:", REDIRECT_URI);
   const url = oAuth2Client.generateAuthUrl({
@@ -44,21 +45,25 @@ app.get("/auth", (req, res) => {
   res.redirect(url);
 });
 
-// Paso 2: recibir el código y obtener el token
+// 🔹 Paso 2: recibir el código y obtener el token (solo para generar el refresh_token inicial)
 app.get("/oauth2callback", async (req, res) => {
   try {
     const { code } = req.query;
     const { tokens } = await oAuth2Client.getToken(code);
     oAuth2Client.setCredentials(tokens);
-    fs.writeFileSync("tokens.json", JSON.stringify(tokens));
-    res.send("✅ Autenticación completada, ya podés guardar respuestas.");
+
+    // ⚠️ Ya no guardamos tokens.json en disco
+    // El refresh_token lo copiás y lo guardás en Render como variable de entorno
+    console.log("Tokens obtenidos:", tokens);
+
+    res.send("✅ Autenticación completada. Copiá el refresh_token y guardalo en Render.");
   } catch (err) {
     console.error(err);
     res.status(500).send("Error en la autenticación");
   }
 });
 
-// Paso 3: endpoint para guardar respuestas
+// 🔹 Paso 3: endpoint para guardar respuestas
 app.post("/guardar", async (req, res) => {
   try {
     console.log("Datos recibidos:", req.body);
@@ -90,6 +95,6 @@ app.post("/guardar", async (req, res) => {
   }
 });
 
-// Puerto de Render
+// 🔹 Puerto de Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor escuchando en puerto ${PORT}`));
