@@ -37,6 +37,7 @@
 </head>
 <body>
   <h1>Focus Group Virtual</h1>
+  
   <p class="intro">
     Hola, somos <strong>Azul M.</strong>, <strong>Azul F.</strong> y <strong>Esteban</strong>, y estamos realizando nuestro último final de la carrera de Licenciatura en Diseño Gráfico. 
     Ya estamos en la etapa final y necesitamos tu ayuda para completar este trabajo. 
@@ -97,7 +98,12 @@ const piezas = [
     "CARRUSEL1-01.webp","CARRUSEL1-02.webp","CARRUSEL1-03.webp",
     "CARRUSEL1-04.webp","CARRUSEL1-05.webp","CARRUSEL1-06.webp"
   ], titulo:"Posteo N° 2" },
-  { tipo:"reel", archivos:"video", titulo:"Posteo N° 3"},
+{ 
+  tipo:"video", 
+  archivoWebM:"video.webm", 
+  archivoMP4:"video.mp4", 
+  titulo:"Posteo N° 3" 
+} ,
   { tipo:"carrusel", archivos:[
     "CARRUSEL2-01.webp","CARRUSEL2-02.webp","CARRUSEL2-03.webp","CARRUSEL2-04.webp"
   ], titulo:"Posteo N°4" },
@@ -171,16 +177,29 @@ function mostrarSiguiente() {
   }
 
   if (pieza.tipo === "video") {
-    const video = document.createElement("video");
-    video.src = pieza.archivo;
-    video.autoplay = true;
-    video.controls = false;
-    contenedor.appendChild(video);
-    video.onended = () => {
-      contenedor.innerHTML = "";
-      document.getElementById("preguntas").style.display = "block";
-    };
-  }
+  const video = document.createElement("video");
+  video.autoplay = true;
+  video.controls = true;
+
+  const sourceWebM = document.createElement("source");
+  sourceWebM.src = pieza.archivoWebM;   // ej. "reel.webm"
+  sourceWebM.type = "video/webm";
+
+  const sourceMP4 = document.createElement("source");
+  sourceMP4.src = pieza.archivoMP4;     // ej. "reel.mp4"
+  sourceMP4.type = "video/mp4";
+
+  video.appendChild(sourceWebM);
+  video.appendChild(sourceMP4);
+
+  contenedor.appendChild(video);
+
+  video.onended = () => {
+    contenedor.innerHTML = "";
+    document.getElementById("preguntas").style.display = "block";
+  };
+}
+
 }
 
 function continuar() {

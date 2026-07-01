@@ -9,8 +9,9 @@ const fs = require("fs");
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));
 
+// Esta línea expone la carpeta "public" donde tenés imágenes y videos
+app.use(express.static("public"));
 
 // Ruta por defecto: abrir focusgrupo.html al entrar a /
 app.get("/", (req, res) => {
@@ -89,8 +90,6 @@ app.post("/guardar", async (req, res) => {
   }
 });
 
-// ⚠️ Importante: static al final
-app.use(express.static(path.join(__dirname)));
-
+// Puerto de Render
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor escuchando en puerto ${PORT}`));
